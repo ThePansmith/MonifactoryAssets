@@ -1,2 +1,2 @@
 ## Monifactory Assets
-Misc Assets and other external files used in Monifactory
+Branding, misc assets, and other external files used in Monifactory
