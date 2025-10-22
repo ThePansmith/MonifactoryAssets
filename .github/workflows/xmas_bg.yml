@@ -1,0 +1,38 @@
+name: Christmas Background Management
+
+on:
+  schedule:
+    - cron: '0 0 1 12 *'
+    - cron: '0 0 1 1 *'
+
+jobs:
+  manage-seasonal-files:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: December 1st - Activate Seasonal Backgrounds
+        if: github.event.schedule == '0 0 1 12 *'
+        run: |
+          cp MonifactoryAssets/menubg/inactive/monibgoverride_xmas.png MonifactoryAssets/menubg/monibgoverride.png
+          cp MonifactoryAssets/menubg/inactive/monibgoverrideblur_xmas.png MonifactoryAssets/menubg/monibgoverrideblur.png
+          echo "Activated seasonal backgrounds"
+
+      - name: January 1st - Remove Seasonal Backgrounds
+        if: github.event.schedule == '0 0 1 1 *'
+        run: |
+          rm -f MonifactoryAssets/menubg/monibgoverride.png
+          rm -f MonifactoryAssets/menubg/monibgoverrideblur.png
+          echo "Removed seasonal backgrounds"
+
+      - name: Commit and push changes
+        run: |
+          git add .
+          git commit -m "Auto-update: ${{ github.event.schedule == '0 0 1 12 *' && 'Activate seasonal backgrounds' || 'Remove seasonal backgrounds' }}"
+          git push
